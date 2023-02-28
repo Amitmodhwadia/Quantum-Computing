@@ -1,0 +1,47 @@
+def Rectangle(a,b,c,d):
+
+    n = max(a.bit_length(), b.bit_length(), c.bit_length(), d.bit_length())
+    qr_a = QuantumRegister(n, name='a')
+    qr_b = QuantumRegister(n, name='b')
+    qr_c = QuantumRegister(n, name='c')
+    qr_d = QuantumRegister(n, name='d')
+
+    p = QuantumCircuit(qr_a)
+    q = QuantumCircuit(qr_b)
+    r = QuantumCircuit(qr_c)
+    s = QuantumCircuit(qr_d)
+
+
+    a_bits = [int(bit) for bit in bin(a & (2**n-1))[2:]]
+    b_bits = [int(bit) for bit in bin(b & (2**n-1))[2:]]
+    c_bits = [int(bit) for bit in bin(c & (2**n-1))[2:]]
+    d_bits = [int(bit) for bit in bin(d & (2**n-1))[2:]]
+
+    a_bits.reverse()
+    b_bits.reverse()
+    c_bits.reverse()
+    d_bits.reverse()
+
+    for i, bit in enumerate(a_bits):
+        if bit == 1:
+            p.x(qr_a[i])
+    for i, bit in enumerate(b_bits):
+        if bit == 1:
+            q.x(qr_b[i])
+
+    for i, bit in enumerate(c_bits):
+        if bit == 1:
+            r.x(qr_c[i])
+    for i, bit in enumerate(d_bits):
+        if bit == 1:
+            s.x(qr_d[i])
+
+    def Eq(x,y):
+        Op1 = Operator(x)
+        Op2 = Operator(y)
+        return Op1.equiv(Op2)
+
+    if ((Eq(p,q) and Eq(s,r)) or (Eq(p,r) and Eq(q,s)) or (Eq(p,s) and Eq(q,r))):
+        print("The given input creates a Rectangle")
+    else:
+        print("Not exactly a rectangle but a Quadrilateral")
